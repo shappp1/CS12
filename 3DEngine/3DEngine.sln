@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DEngine", "3DEngine.csproj", "{47BEEA3C-2283-4604-828C-FE7D014A566F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47BEEA3C-2283-4604-828C-FE7D014A566F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47BEEA3C-2283-4604-828C-FE7D014A566F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47BEEA3C-2283-4604-828C-FE7D014A566F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47BEEA3C-2283-4604-828C-FE7D014A566F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {31E20FEC-784C-4F75-9421-C8C6734F9FC4}
+	EndGlobalSection
+EndGlobal

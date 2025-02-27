@@ -1,0 +1,10 @@
+H:\Programming\3DEngine\bin\Debug\3DEngine.exe.config
+H:\Programming\3DEngine\bin\Debug\3DEngine.exe
+H:\Programming\3DEngine\bin\Debug\3DEngine.pdb
+H:\Programming\3DEngine\obj\Debug\3DEngine.csproj.AssemblyReference.cache
+H:\Programming\3DEngine\obj\Debug\_3DEngine.Form1.resources
+H:\Programming\3DEngine\obj\Debug\_3DEngine.Properties.Resources.resources
+H:\Programming\3DEngine\obj\Debug\3DEngine.csproj.GenerateResource.cache
+H:\Programming\3DEngine\obj\Debug\3DEngine.csproj.CoreCompileInputs.cache
+H:\Programming\3DEngine\obj\Debug\3DEngine.exe
+H:\Programming\3DEngine\obj\Debug\3DEngine.pdb

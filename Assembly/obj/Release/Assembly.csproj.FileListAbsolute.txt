@@ -1,0 +1,7 @@
+H:\Programming\Assembly\obj\Release\Assembly.csproj.AssemblyReference.cache
+H:\Programming\Assembly\obj\Release\Assembly.csproj.CoreCompileInputs.cache
+H:\Programming\Assembly\bin\Release\Assembly.exe.config
+H:\Programming\Assembly\bin\Release\Assembly.exe
+H:\Programming\Assembly\bin\Release\Assembly.pdb
+H:\Programming\Assembly\obj\Release\Assembly.exe
+H:\Programming\Assembly\obj\Release\Assembly.pdb

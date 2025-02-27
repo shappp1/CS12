@@ -1,0 +1,7 @@
+H:\Programming\DP1D\bin\Release\DP1D.exe.config
+H:\Programming\DP1D\bin\Release\DP1D.exe
+H:\Programming\DP1D\bin\Release\DP1D.pdb
+H:\Programming\DP1D\obj\Release\DP1D.csproj.AssemblyReference.cache
+H:\Programming\DP1D\obj\Release\DP1D.csproj.CoreCompileInputs.cache
+H:\Programming\DP1D\obj\Release\DP1D.exe
+H:\Programming\DP1D\obj\Release\DP1D.pdb

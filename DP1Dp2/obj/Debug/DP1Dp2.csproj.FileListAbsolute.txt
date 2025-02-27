@@ -1,0 +1,7 @@
+H:\Programming\DP1Dp2\bin\Debug\DP1Dp2.exe.config
+H:\Programming\DP1Dp2\bin\Debug\DP1Dp2.exe
+H:\Programming\DP1Dp2\bin\Debug\DP1Dp2.pdb
+H:\Programming\DP1Dp2\obj\Debug\DP1Dp2.csproj.AssemblyReference.cache
+H:\Programming\DP1Dp2\obj\Debug\DP1Dp2.csproj.CoreCompileInputs.cache
+H:\Programming\DP1Dp2\obj\Debug\DP1Dp2.exe
+H:\Programming\DP1Dp2\obj\Debug\DP1Dp2.pdb
