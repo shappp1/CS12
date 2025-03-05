@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DP1Dp2 {
     class Program {
@@ -16,6 +15,7 @@ namespace DP1Dp2 {
         }
 
         static int[] LongestIncreasingSubsequence(int[] seq) {
+            if (seq.Length == 0) return new int[] { };
             (int length, int prev_index)[] subseq = new (int, int)[seq.Length];
 
             subseq[0].length = 1;
@@ -103,30 +103,27 @@ namespace DP1Dp2 {
             if (sum == 0)
                 return new int[] { Array.IndexOf(nums, 0) }; // IndexOf returns -1 if element not found so this works regardless of zero being in nums
 
-            const int CANT_MAKE_VALUE = -1234;
-            const int DONE_VALUE = -1;
-
             // nums_index[i] is the index into nums
             int[] nums_index = new int[sum + 1];
-            for (int i = 0; i <= sum; i++) {
-                nums_index[i] = CANT_MAKE_VALUE;
+            for (int i = 1; i <= sum; i++) {
+                nums_index[i] = -1;
             }
-
-            nums_index[0] = DONE_VALUE;
 
             for (int i = 0; i < nums.Length; i++) {
                 if (nums[i] == 0) continue; // 0 is bad
-                
+
                 for (int j = sum - nums[i]; j >= 0; j--) {
-                    if (nums_index[j] != CANT_MAKE_VALUE) {
+                    if (nums_index[j] != -1) {
                         nums_index[nums[i] + j] = i;
                     }
                 }
             }
 
+            if (nums_index[sum] == -1) return new int[] { -1 };
+
             Stack<int> ret = new Stack<int>();
             int index = sum;
-            while (nums_index[index] != DONE_VALUE) {
+            while (index != 0) {
                 ret.Push(nums_index[index]);
 
                 index -= nums[nums_index[index]];
@@ -135,8 +132,42 @@ namespace DP1Dp2 {
             return ret.ToArray();
         }
 
+        static void TestLongestIncreasingSubsequence() {
+            Console.WriteLine("LongestIncreasingSubsequence:");
+            Console.WriteLine("{ }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { })) + " } expecting { }");
+            Console.WriteLine("{ 1 }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { 1 })) + " } expecting { 0 }");
+            Console.WriteLine("{ 3, 1 }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { 3, 1 })) + " } expecting { 0 } OR { 1 }");
+            Console.WriteLine("{ 1, 3 }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { 1, 3 })) + " } expecting { 0, 1 }");
+            Console.WriteLine("{ 1, 5, 1, 1, 5 }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { 1, 5, 1, 1, 5 })) + " } expecting { 0, 1 } OR { 2, 4 } OR { 3, 4 }");
+            Console.WriteLine("{ INT_MIN, INT_MAX }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { int.MinValue, int.MaxValue })) + " } expecting { 0, 1 }");
+            Console.WriteLine("{ INT_MAX, INT_MIN }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { int.MaxValue, int.MinValue })) + " } expecting { 0 } OR { 1 }");
+            Console.WriteLine("{ 0, 0, 0, 0, }: { " + string.Join(", ", LongestIncreasingSubsequence(new int[] { 0, 0, 0, 0 })) + " } expecting { 0 } OR { 1 } OR { 2 } OR { 3 }");
+            Console.WriteLine();
+        }
+
+        static void TestDoubleOrPlusPlusOrPlusEqualsFour() {
+            Console.WriteLine("TripleOrPlusPlus:");
+            Console.WriteLine("0: { " + string.Join(", ", DoubleOrPlusPlusOrPlusEqualsFour(0)) + " } expecting { }");
+            Console.WriteLine("1: { " + string.Join(", ", DoubleOrPlusPlusOrPlusEqualsFour(1)) + " } expecting { ADD_1 }");
+            Console.WriteLine("5: { " + string.Join(", ", DoubleOrPlusPlusOrPlusEqualsFour(5)) + " } expecting { ADD_1, ADD_4 } OR { ADD_4, ADD_1 }");
+            Console.WriteLine("532: { " + string.Join(", ", DoubleOrPlusPlusOrPlusEqualsFour(532)) + " } expecting 10 elements");
+            Console.WriteLine();
+        }
+
+        static void TestSubsetSum() {
+            Console.WriteLine("SubsetSum:");
+            Console.WriteLine("{ }, 0: { " + string.Join(", ", SubsetSum(new int[] { }, 0)) + " } expecting { -1 }");
+            Console.WriteLine("{ }, 17: { " + string.Join(", ", SubsetSum(new int[] { }, 17)) + " } expecting { -1 }");
+            Console.WriteLine("{ 2, 7, 3 }, 0: { " + string.Join(", ", SubsetSum(new int[] { 2, 7, 3 }, 0)) + " } expecting { -1 }");
+            Console.WriteLine("{ 2, 7, 3 }, 9: { " + string.Join(", ", SubsetSum(new int[] { 2, 7, 3 }, 9)) + " } expecting { 0, 1 }");
+            Console.WriteLine("{ 2, 7, 3 }, 10: { " + string.Join(", ", SubsetSum(new int[] { 2, 7, 3 }, 10)) + " } expecting { 1, 2 }");
+            Console.WriteLine();
+        }
+
         static void Main(string[] args) {
-            Console.WriteLine("{{ {0} }}", string.Join(", ", SubsetSum(new int[] { 7, 1, 4 }, 11)));
+            TestLongestIncreasingSubsequence();
+            TestDoubleOrPlusPlusOrPlusEqualsFour();
+            TestSubsetSum();
 
             pause();
         }
