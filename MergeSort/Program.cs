@@ -7,40 +7,42 @@ namespace MergeSort {
 
         static void pause() => Console.ReadKey();
         
+        static void _MergeSort(ref int[] arr, ref int[] buffer, int start, int end) {
+            if (end - start < 2) return; // if len(section to sort) = 0 or 1, return, base case
+
+            int midpoint = (start + end) / 2; // midpoint of region to sort
+
+            _MergeSort(ref arr, ref buffer, start, midpoint);
+            _MergeSort(ref arr, ref buffer, midpoint, end);
+
+            int index1 = start, index2 = midpoint;
+            for (int i = 0; i < end - start; i++) {
+                if (index1 < midpoint && index2 < end) {
+                    buffer[i] = (arr[index1] <= arr[index2]) ? arr[index1++] : arr[index2++];
+                } else if (index1 >= midpoint) {
+                    buffer[i] = arr[index2++];
+                } else { // index2 must (should) be >= end
+                    buffer[i] = arr[index1++];
+                }
+            }
+
+            int j = 0;
+            for (int i = start; i < end; i++) {
+                arr[i] = buffer[j++];
+            }
+        }
+
         /**
-         * sorts an array
-         * start is inclusive index into arr to start sorting at
-         * end is exclusive index to stop sorting at (poor wording ik)
+         * sorts an section of an array from start (inclusive) to end (exclusive)
          * start and end are optional, start will default to 0 and end will default to arr.Length
          */
         static void MergeSort(ref int[] arr, int start = 0, int end = 0) {
             if (start < 0 || start >= arr.Length || end < 0 || end > arr.Length) return; // invalid params
             if (end == 0) end = arr.Length;
 
-            if (end - start < 2) return; // if len(section to sort) = 0 or 1, return, base case
-
-            int mid = (start + end) / 2; // midpoint of region to sort
-
-            MergeSort(ref arr, start, mid);
-            MergeSort(ref arr, mid, end);
-
-            int[] builder = new int[end - start];
-
-            int index1 = start, index2 = mid;
-            for (int i = 0; i < end - start; i++) {
-                if (index1 < mid && index2 < end) {
-                    builder[i] = (arr[index1] <= arr[index2]) ? arr[index1++] : arr[index2++];
-                } else if (index1 >= mid) {
-                    builder[i] = arr[index2++];
-                } else { // index2 must (should) be >= end
-                    builder[i] = arr[index1++];
-                }
-            }
-
-            int j = 0;
-            for (int i = start; i < end; i++) {
-                arr[i] = builder[j++];
-            }
+            int[] buffer = new int[end - start];
+            _MergeSort(ref arr, ref buffer, start, end);
+            
 
             return; // returns
         }
@@ -52,7 +54,7 @@ namespace MergeSort {
         }
 
         static void Main(string[] args) {
-            const int SIZE = 5_000_000;
+            const int SIZE = 333_333_333;
             int[] to_sort = new int[SIZE];
 
             double avg = 0;

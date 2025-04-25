@@ -1,0 +1,10 @@
+H:\Programming\PeakCraft\bin\Release\PeakCraft.exe.config
+H:\Programming\PeakCraft\bin\Release\PeakCraft.exe
+H:\Programming\PeakCraft\bin\Release\PeakCraft.pdb
+H:\Programming\PeakCraft\obj\Release\PeakCraft.csproj.AssemblyReference.cache
+H:\Programming\PeakCraft\obj\Release\PeakCraft.PeakCraft.resources
+H:\Programming\PeakCraft\obj\Release\PeakCraft.Properties.Resources.resources
+H:\Programming\PeakCraft\obj\Release\PeakCraft.csproj.GenerateResource.cache
+H:\Programming\PeakCraft\obj\Release\PeakCraft.csproj.CoreCompileInputs.cache
+H:\Programming\PeakCraft\obj\Release\PeakCraft.exe
+H:\Programming\PeakCraft\obj\Release\PeakCraft.pdb

@@ -1,7 +1,11 @@
 #include <iostream>
 
-void merge_sort() {
+void _merge_sort(int &arr, int &copy, int start, int end) {
 
+}
+
+void merge_sort() {
+    
 }
 
 int main() {

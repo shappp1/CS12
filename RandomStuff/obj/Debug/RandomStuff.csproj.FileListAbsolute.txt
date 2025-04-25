@@ -1,0 +1,7 @@
+C:\Users\goodrick.shane\source\repos\RandomStuff\bin\Debug\RandomStuff.exe.config
+C:\Users\goodrick.shane\source\repos\RandomStuff\bin\Debug\RandomStuff.exe
+C:\Users\goodrick.shane\source\repos\RandomStuff\bin\Debug\RandomStuff.pdb
+C:\Users\goodrick.shane\source\repos\RandomStuff\obj\Debug\RandomStuff.csproj.AssemblyReference.cache
+C:\Users\goodrick.shane\source\repos\RandomStuff\obj\Debug\RandomStuff.csproj.CoreCompileInputs.cache
+C:\Users\goodrick.shane\source\repos\RandomStuff\obj\Debug\RandomStuff.exe
+C:\Users\goodrick.shane\source\repos\RandomStuff\obj\Debug\RandomStuff.pdb

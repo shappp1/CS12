@@ -1,0 +1,7 @@
+C:\Users\goodrick.shane\source\repos\NetworkingTest\bin\Debug\NetworkingTest.exe.config
+C:\Users\goodrick.shane\source\repos\NetworkingTest\bin\Debug\NetworkingTest.exe
+C:\Users\goodrick.shane\source\repos\NetworkingTest\bin\Debug\NetworkingTest.pdb
+C:\Users\goodrick.shane\source\repos\NetworkingTest\obj\Debug\NetworkingTest.csproj.AssemblyReference.cache
+C:\Users\goodrick.shane\source\repos\NetworkingTest\obj\Debug\NetworkingTest.csproj.CoreCompileInputs.cache
+C:\Users\goodrick.shane\source\repos\NetworkingTest\obj\Debug\NetworkingTest.exe
+C:\Users\goodrick.shane\source\repos\NetworkingTest\obj\Debug\NetworkingTest.pdb

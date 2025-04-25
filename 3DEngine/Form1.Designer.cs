@@ -24,7 +24,13 @@ namespace _3DEngine {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            this.GameTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // GameTimer
+            // 
+            this.GameTimer.Tick += new System.EventHandler(this.Tick);
             // 
             // Form1
             // 
@@ -33,13 +39,14 @@ namespace _3DEngine {
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressed);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer GameTimer;
     }
 }
 

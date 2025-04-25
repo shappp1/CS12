@@ -1,0 +1,7 @@
+H:\Programming\QOIdecoder\bin\Debug\QOIdecoder.exe.config
+H:\Programming\QOIdecoder\bin\Debug\QOIdecoder.exe
+H:\Programming\QOIdecoder\bin\Debug\QOIdecoder.pdb
+H:\Programming\QOIdecoder\obj\Debug\QOIdecoder.csproj.AssemblyReference.cache
+H:\Programming\QOIdecoder\obj\Debug\QOIdecoder.csproj.CoreCompileInputs.cache
+H:\Programming\QOIdecoder\obj\Debug\QOIdecoder.exe
+H:\Programming\QOIdecoder\obj\Debug\QOIdecoder.pdb
