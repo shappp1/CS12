@@ -9,8 +9,9 @@ namespace PeakCraft {
         private Block[,,] world = new Block[8, 8, 8];
         private Player player = new Player(0, 0, -5);
 
-        private Color background_color = Color.Black;
-        private Pen wireframe_pen = new Pen(Color.White);
+        private Color background_color = Color.White;
+        private Brush filled_brush = new SolidBrush(Color.BlanchedAlmond);
+        private Pen wireframe_pen = new Pen(Color.Black);
 
         public PeakCraft() {
             InitializeComponent();
@@ -28,16 +29,66 @@ namespace PeakCraft {
 
             // configure settings
             // default settings are okay for now
+            Settings.FOV = 60;
 
             timer1.Enabled = true;
         }
 
         private void Draw() {
-            DrawWorldWireframe();
+            // DrawWorldWireframe();
+            DrawWorldFilled();
         }
 
         private void DrawUI() {
 
+        }
+
+        private void DrawWorldFilled() {
+            gBuff.Graphics.Clear(background_color);
+
+            Vec3[] projected;
+            PointF[] to_draw = new PointF[8];
+            bool[] should_draw = new bool[8];
+
+            for (int x = 0; x < world.GetLength(0); x++) {
+                for (int y = 0; y < world.GetLength(1); y++) {
+                    for (int z = 0; z < world.GetLength(2); z++) {
+                        if (!world[x, y, z].Visible) continue;
+
+                        //points = Block.GetVertices(x, y, z);
+                        projected = ProjectPoints(Block.GetVertices(x, y, z), .01, 100);
+
+                        // convert projected points to screen coordinates
+                        for (int i = 0; i < 8; i++) {
+                            // random arbitrary bounds for X and Y
+                            if (projected[i].Z < -1 || projected[i].Z > 1) {
+                                should_draw[i] = false;
+                            } else {
+                                to_draw[i].X = (float)(Width * (1 + projected[i].X) / 2);
+                                to_draw[i].Y = (float)(Height * (1 - projected[i].Y) / 2);
+                                should_draw[i] = true;
+                            }
+                        }
+
+                        foreach (int[] indices in Block.FaceIndices) {
+                            // don't draw face
+                            if (!(should_draw[indices[0]] && should_draw[indices[1]] && should_draw[indices[2]] && should_draw[indices[3]]))
+                                continue;
+
+                            // cull faces not facing player
+                            if (Vec3.CrossProduct(projected[indices[1]] - projected[indices[0]], projected[indices[2]] - projected[indices[1]]).Z >= 0)
+                                continue;
+                            
+                            
+
+                            PointF[] points = new PointF[] { to_draw[indices[0]], to_draw[indices[1]], to_draw[indices[2]], to_draw[indices[3]] };
+                            gBuff.Graphics.FillPolygon(filled_brush, points);
+                            gBuff.Graphics.DrawPolygon(wireframe_pen, points);
+                        }
+                    }
+                }
+            }
+            gBuff.Render();
         }
 
         private void DrawWorldWireframe() {
@@ -63,9 +114,7 @@ namespace PeakCraft {
                                 to_draw[i].X = (float)(Width * (1 + projected[i].X) / 2);
                                 to_draw[i].Y = (float)(Height * (1 - projected[i].Y) / 2);
                             }
-                            // System.Diagnostics.Debug.WriteLine($"{projected[i]}  ->  {to_draw[i]}");
                         }
-                        // System.Diagnostics.Debug.WriteLine("");
 
                         foreach (int[] indices in Block.FaceIndices) {
                             if (to_draw[indices[0]].Equals(invalid) || to_draw[indices[1]].Equals(invalid) || to_draw[indices[2]].Equals(invalid) || to_draw[indices[3]].Equals(invalid))
@@ -189,13 +238,19 @@ namespace PeakCraft {
         public Block(bool visible = false, bool tangible = false) {
             Visible = visible;
             Tangible = tangible;
+            
         }
+
+        //public static T[][] MapSides<T>(ref T[] arr, Face face) {
+        //    T[][] ret = new T[6][];
+        //    return new T[] { arr[Indices[(int)face][0]], arr[Indices[(int)face][1]], arr[Indices[(int)face][2]], arr[Indices[(int)face][3]] };
+        //}
 
         public static Vec3[] GetVertices(int x, int y, int z) => new Vec3[] { new Vec3(x, y + 1, z), new Vec3(x + 1, y + 1, z), new Vec3(x + 1, y, z), new Vec3(x, y, z), new Vec3(x + 1, y + 1, z + 1), new Vec3(x, y + 1, z + 1), new Vec3(x, y, z + 1), new Vec3(x + 1, y, z + 1) };
+    }
 
-        enum BlockFace {
-            FRONT = 0, BACK = 1, LEFT = 2, RIGHT = 3, TOP = 4, BOTTOM = 5
-        }
+    enum Face {
+        FRONT = 0, BACK = 1, LEFT = 2, RIGHT = 3, TOP = 4, BOTTOM = 5
     }
 
     struct Vec3 {
@@ -226,6 +281,10 @@ namespace PeakCraft {
 
         public static Vec3 operator -(Vec3 a, Vec3 b) {
             return a + (-b);
+        }
+        
+        public static Vec3 CrossProduct(Vec3 a, Vec3 b) {
+            return new Vec3(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
         }
 
         public override string ToString() {
