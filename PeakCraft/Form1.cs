@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,11 +8,13 @@ namespace PeakCraft {
         private BufferedGraphicsContext gContext;
         private BufferedGraphics gBuff;
         private Block[,,] world = new Block[8, 8, 8];
-        private Player player = new Player(0, 0, -5);
+        private Player player = new Player(3.5, 3.5, -5);
 
         private Color background_color = Color.White;
         private Brush filled_brush = new SolidBrush(Color.BlanchedAlmond);
         private Pen wireframe_pen = new Pen(Color.Black);
+
+        Random rng = new Random();
 
         public PeakCraft() {
             InitializeComponent();
@@ -19,13 +22,14 @@ namespace PeakCraft {
             gBuff = gContext.Allocate(CreateGraphics(), DisplayRectangle);
 
             // setup world
-            for (int x = 0; x < world.GetLength(0); x++) {
-                for (int y = 0; y < world.GetLength(1); y++) {
-                    for (int z = 0; z < world.GetLength(2); z++) {
-                        world[x, y, z] = new Block(true);
+            for (int x = 0; x < world.GetLength(0); x+=2) {
+                for (int y = 0; y < world.GetLength(1); y+=2) {
+                    for (int z = 0; z < world.GetLength(2); z+=2) {
+                        world[x, y, z] = new Block(true, false, Color.Empty);
                     }
                 }
             }
+            RerollWorldColors();
 
             // configure settings
             // default settings are okay for now
@@ -34,13 +38,25 @@ namespace PeakCraft {
             timer1.Enabled = true;
         }
 
+        private void RerollWorldColors() {
+            for (int x = 0; x < world.GetLength(0); x++) {
+                for (int y = 0; y < world.GetLength(1); y++) {
+                    for (int z = 0; z < world.GetLength(2); z++) {
+                        if (world[x, y, z].Visible)
+                            world[x, y, z].Color = Color.FromArgb((int)(0xFF000000 | rng.Next())); // guarantees the block is opaque and uses random RNG
+                    }
+                }
+            }
+        }
+
         private void Draw() {
             // DrawWorldWireframe();
             DrawWorldFilled();
+            DrawUI();
         }
 
         private void DrawUI() {
-
+            //gBuff.Graphics.FillRectangles(new SolidBrush(Color.Gray), new Rectangle[] { new Rectangle( );
         }
 
         private void DrawWorldFilled() {
@@ -49,48 +65,105 @@ namespace PeakCraft {
             Vec3[] projected;
             PointF[] to_draw = new PointF[8];
             bool[] should_draw = new bool[8];
+            SolidBrush brush = new SolidBrush(Color.White);
 
-            for (int x = 0; x < world.GetLength(0); x++) {
-                for (int y = 0; y < world.GetLength(1); y++) {
-                    for (int z = 0; z < world.GetLength(2); z++) {
-                        if (!world[x, y, z].Visible) continue;
+            foreach((int x, int y, int z) in GetBlockDrawOrder()) {
+                if (!world[x, y, z].Visible) continue;
 
-                        //points = Block.GetVertices(x, y, z);
-                        projected = ProjectPoints(Block.GetVertices(x, y, z), .01, 100);
+                //points = Block.GetVertices(x, y, z);
+                projected = ProjectPoints(Block.GetVertices(x, y, z), .01, 100);
 
-                        // convert projected points to screen coordinates
-                        for (int i = 0; i < 8; i++) {
-                            // random arbitrary bounds for X and Y
-                            if (projected[i].Z < -1 || projected[i].Z > 1) {
-                                should_draw[i] = false;
-                            } else {
-                                to_draw[i].X = (float)(Width * (1 + projected[i].X) / 2);
-                                to_draw[i].Y = (float)(Height * (1 - projected[i].Y) / 2);
-                                should_draw[i] = true;
-                            }
-                        }
-
-                        foreach (int[] indices in Block.FaceIndices) {
-                            // don't draw face
-                            if (!(should_draw[indices[0]] && should_draw[indices[1]] && should_draw[indices[2]] && should_draw[indices[3]]))
-                                continue;
-
-                            // cull faces not facing player
-                            if (Vec3.CrossProduct(projected[indices[1]] - projected[indices[0]], projected[indices[2]] - projected[indices[1]]).Z >= 0)
-                                continue;
-                            
-                            
-
-                            PointF[] points = new PointF[] { to_draw[indices[0]], to_draw[indices[1]], to_draw[indices[2]], to_draw[indices[3]] };
-                            gBuff.Graphics.FillPolygon(filled_brush, points);
-                            gBuff.Graphics.DrawPolygon(wireframe_pen, points);
-                        }
+                // convert projected points to screen coordinates
+                for (int i = 0; i < 8; i++) {
+                    // random arbitrary bounds for X and Y
+                    if (projected[i].Z < -1 || projected[i].Z > 1) {
+                        should_draw[i] = false;
+                    } else {
+                        to_draw[i].X = (float)(Width * (1 + projected[i].X) / 2);
+                        to_draw[i].Y = (float)(Height * (1 - projected[i].Y) / 2);
+                        should_draw[i] = true;
                     }
+                }
+
+                brush.Color = world[x, y, z].Color;
+
+                foreach (Face face in Block.Faces) {
+                    int[] ind = Block.GetIndices(face);
+
+                    // don't draw face if any of it's vertices are out of bounds
+                    if (!(should_draw[ind[0]] && should_draw[ind[1]] && should_draw[ind[2]] && should_draw[ind[3]]))
+                        continue;
+
+                    if (TouchingFace(face, x, y, z)) continue;
+
+                    // cull faces not facing player
+                    if (Vec3.CrossProduct(projected[ind[1]] - projected[ind[0]], projected[ind[2]] - projected[ind[1]]).Z >= 0)
+                        continue;
+
+                    PointF[] points = new PointF[] { to_draw[ind[0]], to_draw[ind[1]], to_draw[ind[2]], to_draw[ind[3]] };
+                    gBuff.Graphics.FillPolygon(brush, points);
+                    gBuff.Graphics.DrawPolygon(wireframe_pen, points);
                 }
             }
             gBuff.Render();
         }
+        
+        // this function desperately(?) needs optimization
+        private List<(int, int, int)> GetBlockDrawOrder() {
+            List<(int x, int y, int z, double dist)> blocks = new List<(int, int, int, double)>();
 
+            for (int x = 0; x < world.GetLength(0); x++) {
+                for (int y = 0; y < world.GetLength(1); y++) {
+                    for (int z = 0; z < world.GetLength(2); z++) {
+                        double dx = x - player.Position.X, dy = y - player.Position.Y, dz = z - player.Position.Z;
+                        double len = Math.Sqrt(dx * dx + dy * dy + dz * dz);
+
+                        int i = 0;
+                        while (i < blocks.Count) {
+                            if (blocks[i].dist < len) break;
+                            i++;
+                        }
+                        blocks.Insert(i, (x, y, z, len));
+                    }
+                }
+            }
+
+            List<(int x, int y, int z)> ret = new List<(int, int, int)>(blocks.Count);
+            foreach ((int x, int y, int z, double) block in blocks) {
+                ret.Add((block.x, block.y, block.z));
+            }
+
+            return ret;
+        }
+
+        private bool TouchingFace(Face face, int x, int y, int z) {
+            if (x < 0 || y < 0 || z < 0) return false;
+
+            int max_x = world.GetLength(0) - 1;
+            int max_y = world.GetLength(1) - 1;
+            int max_z = world.GetLength(2) - 1;
+            if (x > max_x || y > max_y || z > max_z)
+                return false;
+
+            switch (face) {
+                case Face.FRONT:
+                    return (z == 0) ? false : world[x, y, z - 1].Visible;
+                case Face.BACK:
+                    return (z == max_z) ? false : world[x, y, z + 1].Visible;
+                case Face.LEFT:
+                    return (x == 0) ? false : world[x - 1, y, z].Visible;
+                case Face.RIGHT:
+                    return (x == max_x) ? false : world[x + 1, y, z].Visible;
+                case Face.TOP:
+                    return (y == max_y) ? false : world[x, y + 1, z].Visible;
+                case Face.BOTTOM:
+                    return (y == 0) ? false : world[x, y - 1, z].Visible;
+                default:
+                    return false;
+            }
+        }
+
+        // ?outdated code here
         private void DrawWorldWireframe() {
             gBuff.Graphics.Clear(background_color);
 
@@ -116,10 +189,11 @@ namespace PeakCraft {
                             }
                         }
 
-                        foreach (int[] indices in Block.FaceIndices) {
-                            if (to_draw[indices[0]].Equals(invalid) || to_draw[indices[1]].Equals(invalid) || to_draw[indices[2]].Equals(invalid) || to_draw[indices[3]].Equals(invalid))
+                        foreach (Face face in Block.Faces) {
+                            int[] ind = Block.GetIndices(face);
+                            if (to_draw[ind[0]].Equals(invalid) || to_draw[ind[1]].Equals(invalid) || to_draw[ind[2]].Equals(invalid) || to_draw[ind[3]].Equals(invalid))
                                 continue;
-                            gBuff.Graphics.DrawPolygon(wireframe_pen, new PointF[] { to_draw[indices[0]], to_draw[indices[1]], to_draw[indices[2]], to_draw[indices[3]] });
+                            gBuff.Graphics.DrawPolygon(wireframe_pen, new PointF[] { to_draw[ind[0]], to_draw[ind[1]], to_draw[ind[2]], to_draw[ind[3]] });
                         }
                     }
                 }
@@ -189,13 +263,35 @@ namespace PeakCraft {
 
         private void KDown(object sender, KeyEventArgs e) {
             KBState.SetKeyDown(e.KeyCode);
-            if (e.KeyCode == Keys.OemSemicolon) {
-
-            }
         }
 
         private void KUp(object sender, KeyEventArgs e) {
             KBState.SetKeyUp(e.KeyCode);
+        }
+
+        private void KPress(object sender, KeyPressEventArgs e) {
+            switch (e.KeyChar) {
+                case ';': // debug menu?
+                    //RerollWorldColors();
+                    ShowDebugMenu();
+                    break;
+                case '-':
+                    InvertFOV();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ShowDebugMenu() {
+            DebugForm debug = new DebugForm();
+
+            debug.Show();
+        }
+
+        // FUNctions
+        private void InvertFOV() {
+            Settings.FOV = 360 - Settings.FOV;
         }
     }
 
@@ -212,17 +308,23 @@ namespace PeakCraft {
     }
 
     static class Settings {
-        public static double FOV { get; set; } = 60;
-        public static double SPEED { get; set; } = .1;
-        public static double SENSITIVITY { get; set; } = .01;
+        public static double FOV { get; set; } = 60; // vertical field of view in degrees
+        public static double SPEED { get; set; } = .1; // units per frame
+        public static double SENSITIVITY { get; set; } = .01; // idk units
+        public static double CURSOR_SIZE { get; set; } = .02; // fraction of screen height
     }
 
-    class Block {
+    struct Block {
         public bool Tangible { get; set; } // determines whether a block has collision
         public bool Visible { get; set; } // determines whether a block is drawn
+        public Color Color { get; set; } // color of block's faces
 
         // can index into this with BlockFace
-        public static int[][] FaceIndices { get; private set; } = {
+        public static Face[] Faces { get; private set; } = {
+            Face.FRONT, Face.BACK, Face.LEFT, Face.RIGHT, Face.TOP, Face.BOTTOM
+        };
+
+        static int[][] FaceIndices { get; } = {
             new int[] { 0, 1, 2, 3 }, // front
             new int[] { 4, 5, 6, 7 }, // back
             new int[] { 5, 0, 3, 6 }, // left
@@ -231,22 +333,26 @@ namespace PeakCraft {
             new int[] { 3, 2, 7, 6 }, // bottom
         };
 
-        public Block() {
-            Tangible = false;
-            Visible = false;
-        }
-        public Block(bool visible = false, bool tangible = false) {
+        public Block(bool visible, bool tangible, Color color) {
             Visible = visible;
             Tangible = tangible;
-            
+            Color = color;
         }
 
-        //public static T[][] MapSides<T>(ref T[] arr, Face face) {
-        //    T[][] ret = new T[6][];
-        //    return new T[] { arr[Indices[(int)face][0]], arr[Indices[(int)face][1]], arr[Indices[(int)face][2]], arr[Indices[(int)face][3]] };
-        //}
+        public static int[] GetIndices(Face face) {
+            return FaceIndices[(int)face];
+        }
 
-        public static Vec3[] GetVertices(int x, int y, int z) => new Vec3[] { new Vec3(x, y + 1, z), new Vec3(x + 1, y + 1, z), new Vec3(x + 1, y, z), new Vec3(x, y, z), new Vec3(x + 1, y + 1, z + 1), new Vec3(x, y + 1, z + 1), new Vec3(x, y, z + 1), new Vec3(x + 1, y, z + 1) };
+        public static Vec3[] GetVertices(int x, int y, int z) => new Vec3[] {
+            new Vec3(x, y + 1, z),
+            new Vec3(x + 1, y + 1, z),
+            new Vec3(x + 1, y, z),
+            new Vec3(x, y, z),
+            new Vec3(x + 1, y + 1, z + 1),
+            new Vec3(x, y + 1, z + 1),
+            new Vec3(x, y, z + 1),
+            new Vec3(x + 1, y, z + 1)
+        };
     }
 
     enum Face {

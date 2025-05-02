@@ -8,3 +8,4 @@ H:\Programming\PeakCraft\obj\Release\PeakCraft.csproj.GenerateResource.cache
 H:\Programming\PeakCraft\obj\Release\PeakCraft.csproj.CoreCompileInputs.cache
 H:\Programming\PeakCraft\obj\Release\PeakCraft.exe
 H:\Programming\PeakCraft\obj\Release\PeakCraft.pdb
+H:\Programming\PeakCraft\obj\Release\PeakCraft.DebugForm.resources

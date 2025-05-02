@@ -42,6 +42,7 @@ namespace PeakCraft {
             this.Text = "PeakCraft";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KUp);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KPress);
             this.Resize += new System.EventHandler(this.FormResized);
             this.ResumeLayout(false);
 
